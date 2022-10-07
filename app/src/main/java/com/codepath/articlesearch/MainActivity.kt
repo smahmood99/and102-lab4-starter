@@ -20,13 +20,14 @@ fun createJson() = Json {
 }
 
 private const val TAG = "MainActivity/"
-private const val SEARCH_API_KEY = BuildConfig.API_KEY
-private const val ARTICLE_SEARCH_URL =
-    "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=${SEARCH_API_KEY}"
+private const val SEARCH_API_KEY = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
+private const val TRENDING_ACTORS_SEARCH_URL =
+    "https://api.themoviedb.org/3/trending/person/day?api_key=${SEARCH_API_KEY}"
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var articlesRecyclerView: RecyclerView
+    private lateinit var trendingActorsRecyclerView: RecyclerView
     private lateinit var binding: ActivityMainBinding
+    private val trendingActors = mutableListOf<TrendingActors>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,16 +36,20 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        articlesRecyclerView = findViewById(R.id.articles)
+        trendingActorsRecyclerView = findViewById(R.id.trendingActors)
+
         // TODO: Set up ArticleAdapter with articles
 
-        articlesRecyclerView.layoutManager = LinearLayoutManager(this).also {
+        val trendingActorsAdapter = ArticleAdapter(this, trendingActors)
+        trendingActorsRecyclerView.adapter = trendingActorsAdapter
+
+        trendingActorsRecyclerView.layoutManager = LinearLayoutManager(this).also {
             val dividerItemDecoration = DividerItemDecoration(this, it.orientation)
-            articlesRecyclerView.addItemDecoration(dividerItemDecoration)
+            trendingActorsRecyclerView.addItemDecoration(dividerItemDecoration)
         }
 
         val client = AsyncHttpClient()
-        client.get(ARTICLE_SEARCH_URL, object : JsonHttpResponseHandler() {
+        client.get(TRENDING_ACTORS_SEARCH_URL, object : JsonHttpResponseHandler() {
             override fun onFailure(
                 statusCode: Int,
                 headers: Headers?,
@@ -58,10 +63,17 @@ class MainActivity : AppCompatActivity() {
                 Log.i(TAG, "Successfully fetched articles: $json")
                 try {
                     // TODO: Create the parsedJSON
-
                     // TODO: Do something with the returned json (contains article information)
+                    val parsedJSON = createJson().decodeFromString(
+                        SearchTrendingActorsResults.serializer(),
+                        json.jsonObject.toString()
+                    )
 
                     // TODO: Save the articles and reload the screen
+                    parsedJSON.results?.let {
+                        list -> trendingActors.addAll(list)
+                        trendingActorsAdapter.notifyDataSetChanged()
+                    }
 
                 } catch (e: JSONException) {
                     Log.e(TAG, "Exception: $e")
