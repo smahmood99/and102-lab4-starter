@@ -2,7 +2,7 @@
 
 Submitted by: **Sarmad Mahmood**
 
-**Flixster Part 2** is a movie browsing app that allows users to browse ... [TODO] 
+**Flixster+** is a movie browsing app that allows users to browse actors trending this week on MoviesDB. 
 
 Time spent: **8** hours spent in total
 
@@ -31,7 +31,6 @@ The following **additional** features are implemented:
 Here's a walkthrough of implemented user stories:
 
 <img src='http://g.recordit.co/jn2FWqfPzL.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
-
 GIF created with Recordit
 
 ## Notes
